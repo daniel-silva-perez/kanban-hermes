@@ -9,6 +9,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
   DragStartEvent,
   DragOverEvent,
   DragEndEvent,
@@ -21,7 +22,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion, AnimatePresence } from "framer-motion";
-import { INITIAL_TASKS, COLUMNS, PROJECTS, Task, TaskStatus, Project } from "@/lib/data";
+import { INITIAL_TASKS, COLUMNS, PROJECTS, Task, TaskStatus, Priority, Assignee, Project } from "@/lib/data";
 import { TaskCard } from "@/components/TaskCard";
 
 // --- Sortable Task Wrapper ---
@@ -58,8 +59,16 @@ function KanbanColumn({
   tasks: Task[];
   onTaskClick: (task: Task) => void;
 }) {
+  const { setNodeRef, isOver } = useDroppable({ id: column.id });
+
   return (
-    <div className="flex flex-col min-w-[280px] w-[280px] shrink-0">
+    <div
+      ref={setNodeRef}
+      className={`flex flex-col min-w-[280px] w-[280px] shrink-0 rounded-xl transition-colors ${
+        isOver ? "bg-[var(--muted-bg)] border-2 border-dashed" : ""
+      }`}
+      style={isOver ? { borderColor: column.color } : undefined}
+    >
       {/* Column Header */}
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-2">
@@ -124,73 +133,71 @@ function MobileColumnView({
         )}
       </div>
 
-      {/* Bottom Sheet for Task Actions */}
+      {/* Bottom Sheet for Task Actions + Backdrop */}
       <AnimatePresence>
         {selectedTask && (
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-50 bg-[var(--card)] border-t border-[var(--border)] rounded-t-2xl shadow-2xl max-h-[70vh] overflow-y-auto"
-          >
-            <div className="p-4">
-              {/* Handle */}
-              <div className="flex justify-center mb-3">
-                <div className="w-10 h-1 rounded-full bg-[var(--border)]" />
-              </div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedTask(null)}
+              className="fixed inset-0 bg-black/30 z-40"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed inset-x-0 bottom-0 z-50 bg-[var(--card)] border-t border-[var(--border)] rounded-t-2xl shadow-2xl max-h-[70vh] overflow-y-auto"
+            >
+              <div className="p-4">
+                {/* Handle */}
+                <div className="flex justify-center mb-3">
+                  <div className="w-10 h-1 rounded-full bg-[var(--border)]" />
+                </div>
 
-              <h3 className="text-base font-semibold">{selectedTask.title}</h3>
-              <p className="mt-1 text-sm text-[var(--muted)]">{selectedTask.description}</p>
+                <h3 className="text-base font-semibold">{selectedTask.title}</h3>
+                <p className="mt-1 text-sm text-[var(--muted)]">{selectedTask.description}</p>
 
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {selectedTask.tags.map((tag) => (
-                  <span key={tag} className="text-[10px] bg-[var(--muted-bg)] text-[var(--muted)] px-2 py-0.5 rounded-full">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                <p className="text-[11px] uppercase tracking-wider text-[var(--muted)] mb-2">Move to</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {COLUMNS.filter((c) => c.id !== selectedTask.status).map((col) => (
-                    <button
-                      key={col.id}
-                      onClick={() => {
-                        onMoveTask(selectedTask.id, col.id);
-                        setSelectedTask(null);
-                      }}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[var(--border)] text-sm hover:bg-[var(--muted-bg)] transition-colors"
-                    >
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: col.color }} />
-                      {col.label}
-                    </button>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {selectedTask.tags.map((tag) => (
+                    <span key={tag} className="text-[10px] bg-[var(--muted-bg)] text-[var(--muted)] px-2 py-0.5 rounded-full">
+                      {tag}
+                    </span>
                   ))}
                 </div>
-              </div>
 
-              <button
-                onClick={() => setSelectedTask(null)}
-                className="mt-4 w-full py-3 rounded-xl bg-[var(--muted-bg)] text-sm font-medium hover:bg-[var(--border)] transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </motion.div>
+                <div className="mt-4 pt-4 border-t border-[var(--border)]">
+                  <p className="text-[11px] uppercase tracking-wider text-[var(--muted)] mb-2">Move to</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {COLUMNS.filter((c) => c.id !== selectedTask.status).map((col) => (
+                      <button
+                        key={col.id}
+                        onClick={() => {
+                          onMoveTask(selectedTask.id, col.id);
+                          setSelectedTask(null);
+                        }}
+                        className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[var(--border)] text-sm hover:bg-[var(--muted-bg)] transition-colors"
+                      >
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: col.color }} />
+                        {col.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setSelectedTask(null)}
+                  className="mt-4 w-full py-3 rounded-xl bg-[var(--muted-bg)] text-sm font-medium hover:bg-[var(--border)] transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-
-      {/* Backdrop */}
-      {selectedTask && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setSelectedTask(null)}
-          className="fixed inset-0 bg-black/30 z-40"
-        />
-      )}
     </div>
   );
 }
@@ -203,6 +210,11 @@ export default function Home() {
   const [activeDragTask, setActiveDragTask] = useState<Task | null>(null);
   const [mobileColumn, setMobileColumn] = useState<TaskStatus>("suggestions");
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDesc, setNewTaskDesc] = useState("");
+  const [newTaskPriority, setNewTaskPriority] = useState<Priority>("medium");
+  const [newTaskAssignee, setNewTaskAssignee] = useState<Assignee>("danny");
 
   const activeProjectData = PROJECTS.find((p) => p.id === activeProject)!;
 
@@ -260,6 +272,51 @@ export default function Home() {
       );
     }
   }, [tasks]);
+
+  const handleDragOver = useCallback((event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const activeId = active.id as string;
+    const overId = over.id as string;
+    const activeTask = tasks.find((t) => t.id === activeId);
+    if (!activeTask) return;
+    const columnIds = COLUMNS.map((c) => c.id);
+    if (columnIds.includes(overId as TaskStatus) && activeTask.status !== overId) {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === activeId ? { ...t, status: overId as TaskStatus } : t))
+      );
+      return;
+    }
+    const overTask = tasks.find((t) => t.id === overId);
+    if (overTask && activeTask.status !== overTask.status) {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === activeId ? { ...t, status: overTask.status } : t))
+      );
+    }
+  }, [tasks]);
+
+  const handleCreateTask = useCallback(() => {
+    if (!newTaskTitle.trim()) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const newTask: Task = {
+      id: Math.random().toString(36).slice(2) + Date.now().toString(36),
+      title: newTaskTitle.trim(),
+      description: newTaskDesc.trim(),
+      status: "suggestions",
+      priority: newTaskPriority,
+      assignee: newTaskAssignee,
+      project: activeProject,
+      tags: [],
+      createdAt: today,
+      updatedAt: today,
+    };
+    setTasks((prev) => [...prev, newTask]);
+    setNewTaskTitle("");
+    setNewTaskDesc("");
+    setNewTaskPriority("medium");
+    setNewTaskAssignee("danny");
+    setShowNewTaskModal(false);
+  }, [newTaskTitle, newTaskDesc, newTaskPriority, newTaskAssignee, activeProject]);
 
   const moveTask = useCallback((taskId: string, newStatus: TaskStatus) => {
     setTasks((prev) =>
@@ -469,6 +526,7 @@ export default function Home() {
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
             <div className="flex gap-5 p-5 min-w-full">
@@ -477,7 +535,7 @@ export default function Home() {
                   <KanbanColumn
                     column={col}
                     tasks={tasksByColumn[col.id]}
-                    onTaskClick={(task) => console.log("Task clicked:", task)}
+                    onTaskClick={setSelectedTask}
                   />
                 </div>
               ))}
@@ -498,6 +556,73 @@ export default function Home() {
           />
         </div>
       </main>
+
+      {/* Desktop Task Detail Drawer */}
+      <AnimatePresence>
+        {selectedTask && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedTask(null)}
+              className="hidden md:block fixed inset-0 bg-black/20 z-40"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="hidden md:flex fixed right-0 top-0 bottom-0 w-[400px] z-50 bg-[var(--card)] border-l border-[var(--border)] flex-col shadow-2xl"
+            >
+              <div className="flex items-center justify-between p-5 border-b border-[var(--border)]">
+                <h3 className="text-base font-semibold truncate pr-4">{selectedTask.title}</h3>
+                <button
+                  onClick={() => setSelectedTask(null)}
+                  className="shrink-0 p-1.5 rounded-md hover:bg-[var(--muted-bg)] transition-colors"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                <p className="text-sm text-[var(--muted)] leading-relaxed">{selectedTask.description}</p>
+                <div className="grid grid-cols-2 gap-3 text-[12px]">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">Status</p>
+                    <p className="font-medium capitalize">{selectedTask.status.replace("-", " ")}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">Priority</p>
+                    <p className="font-medium capitalize">{selectedTask.priority}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">Assignee</p>
+                    <p className="font-medium capitalize">{selectedTask.assignee}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">Updated</p>
+                    <p className="font-medium">{selectedTask.updatedAt}</p>
+                  </div>
+                </div>
+                {selectedTask.tags.length > 0 && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-[var(--muted)] mb-2">Tags</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedTask.tags.map((tag) => (
+                        <span key={tag} className="text-[11px] bg-[var(--muted-bg)] text-[var(--muted)] px-2 py-0.5 rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* New Task Modal */}
       <AnimatePresence>
@@ -526,6 +651,8 @@ export default function Home() {
                     <input
                       type="text"
                       placeholder="Task title..."
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
                       className="mt-1 w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-transparent text-sm outline-none focus:border-[var(--foreground)]"
                     />
                   </div>
@@ -534,22 +661,32 @@ export default function Home() {
                     <textarea
                       rows={3}
                       placeholder="What needs to be done?"
+                      value={newTaskDesc}
+                      onChange={(e) => setNewTaskDesc(e.target.value)}
                       className="mt-1 w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-transparent text-sm outline-none focus:border-[var(--foreground)] resize-none"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-[11px] uppercase tracking-wider text-[var(--muted)] font-medium">Priority</label>
-                      <select className="mt-1 w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-transparent text-sm outline-none focus:border-[var(--foreground)]">
-                        <option>low</option>
-                        <option>medium</option>
-                        <option>high</option>
-                        <option>urgent</option>
+                      <select
+                        value={newTaskPriority}
+                        onChange={(e) => setNewTaskPriority(e.target.value as Priority)}
+                        className="mt-1 w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-transparent text-sm outline-none focus:border-[var(--foreground)]"
+                      >
+                        <option value="low">low</option>
+                        <option value="medium">medium</option>
+                        <option value="high">high</option>
+                        <option value="urgent">urgent</option>
                       </select>
                     </div>
                     <div>
                       <label className="text-[11px] uppercase tracking-wider text-[var(--muted)] font-medium">Assignee</label>
-                      <select className="mt-1 w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-transparent text-sm outline-none focus:border-[var(--foreground)]">
+                      <select
+                        value={newTaskAssignee}
+                        onChange={(e) => setNewTaskAssignee(e.target.value as Assignee)}
+                        className="mt-1 w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-transparent text-sm outline-none focus:border-[var(--foreground)]"
+                      >
                         <option value="danny">Danny</option>
                         <option value="hermes">Hermes</option>
                         <option value="both">Both</option>
@@ -566,7 +703,7 @@ export default function Home() {
                     Cancel
                   </button>
                   <button
-                    onClick={() => setShowNewTaskModal(false)}
+                    onClick={handleCreateTask}
                     className="flex-1 py-2.5 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-sm font-medium hover:opacity-90 transition-opacity"
                   >
                     Create Task
