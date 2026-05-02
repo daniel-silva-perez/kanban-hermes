@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kanban Hermes
 
-## Getting Started
+Deployed task-flow board built with Next.js and TypeScript. The project is a recruiter-readable product surface for fast task capture, prioritization, and project-state scanning.
 
-First, run the development server:
+**Live demo:** https://kanban-hermes.vercel.app
+
+## Why It Matters
+
+Kanban tools are simple on the surface, but useful execution software depends on small product details: quick capture, readable columns, responsive layout, and state that stays understandable as work grows.
+
+## Built With
+
+- Next.js App Router
+- TypeScript
+- React
+- Vercel deployment
+
+## Recruiter Signals
+
+- Full-stack product execution from repo to deployed demo
+- Product-minded UI around repeated daily workflow
+- Clean project surface suitable for iteration, testing, and feature expansion
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Status
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Public demo project. Future improvements can add persistence, drag-and-drop refinements, keyboard shortcuts, and collaboration workflows.
