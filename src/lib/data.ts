@@ -211,7 +211,7 @@ export const INITIAL_TASKS: Task[] = [
     id: "gn-1",
     title: "Kanban drag-and-drop",
     description: "Native HTML5 DnD or @dnd-kit for moving tasks between columns.",
-    status: "completed",
+    status: "in-progress",
     priority: "high",
     assignee: "hermes",
     tags: ["kanban", "ux"],
