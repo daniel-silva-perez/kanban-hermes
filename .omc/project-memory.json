@@ -1,0 +1,169 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1777695179700,
+  "projectRoot": "/home/daniel/Projects/kanban-hermes",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.2.4",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.4",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 16,
+      "lastAccessed": 1777695179688,
+      "keyFiles": [
+        "404.html",
+        "__next.__PAGE__.txt",
+        "__next._full.txt",
+        "__next._head.txt",
+        "__next._index.txt"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 5,
+      "lastAccessed": 1777695179688,
+      "keyFiles": [
+        "file.svg",
+        "globe.svg",
+        "next.svg",
+        "vercel.svg",
+        "window.svg"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1777695179693,
+      "keyFiles": []
+    },
+    "src/app": {
+      "path": "src/app",
+      "purpose": "Application code",
+      "fileCount": 4,
+      "lastAccessed": 1777695179698,
+      "keyFiles": [
+        "favicon.ico",
+        "globals.css",
+        "layout.tsx"
+      ]
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 1,
+      "lastAccessed": 1777695179698,
+      "keyFiles": [
+        "TaskCard.tsx"
+      ]
+    },
+    "src/lib": {
+      "path": "src/lib",
+      "purpose": "Library code",
+      "fileCount": 1,
+      "lastAccessed": 1777695179698,
+      "keyFiles": [
+        "data.ts"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/app/page.tsx",
+      "accessCount": 13,
+      "lastAccessed": 1777695787839,
+      "type": "file"
+    },
+    {
+      "path": "src/components/TaskCard.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1777695681987,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/data.ts",
+      "accessCount": 1,
+      "lastAccessed": 1777695190792,
+      "type": "file"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1777695191137,
+      "type": "file"
+    },
+    {
+      "path": "src/app/globals.css",
+      "accessCount": 1,
+      "lastAccessed": 1777695191537,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
